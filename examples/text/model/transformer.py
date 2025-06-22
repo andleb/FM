@@ -243,6 +243,7 @@ class Transformer(nn.Module):
         )
 
     def forward(self, x_t: Tensor, time: Tensor) -> Tensor:
+
         x = self.vocab_embed(x_t)
         c = F.silu(self.time_embedding(time=time))
 
