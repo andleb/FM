@@ -154,7 +154,7 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
         self.time_emb_dim = config.model.cond_dim
         self.time_embedding = TimestepEmbedder(self.time_emb_dim)
 
-        # If the code requires scaling by sigma at the end
+        # If the code requires scaling by t at the end
 
         # For CNN
         self.num_cnn_channels = config.model.cnn_channels  # e.g. 64
@@ -180,10 +180,10 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
         # Final 1×1 conv to produce per-pixel logits => shape [B, vocab_size, H, W]
         self.final_conv = nn.Conv2d(self.num_cnn_channels, self.vocab_size, kernel_size=1)
 
-    def forward(self, z_img, sigma, x_img=None):
+    def forward(self, z_img, t, x_img=None):
         """
         :param z_img: [B, 1, H, W], the discrete star map (0 or 1)
-        :param sigma: [B,], diffusion timesteps
+        :param t: [B,], diffusion timesteps
         :param x_img: [B, 1, H, W], the noisy conditioning
         :return: logits over the discrete states, shape [B, vocab_size, H, W]
         """
@@ -202,7 +202,7 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
 
         # Get the time embedding
         # (B, time_emb_dim)
-        t_emb = self.time_embedding(sigma)
+        t_emb = self.time_embedding(t)
 
         # Pass through CNN residual blocks
         with torch.amp.autocast("cuda", dtype=torch.bfloat16):
