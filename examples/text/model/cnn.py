@@ -226,4 +226,5 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
             src=torch.zeros_like(logits[:, :1, :, :]) # zeros, broadcast
         )
 
-        return logits
+        # NOTE: the FM loss expects the tokens at the end
+        return logits.reshape(B, H, W, self.vocab_size)
