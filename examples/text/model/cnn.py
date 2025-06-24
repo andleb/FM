@@ -214,17 +214,17 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
             logits = self.final_conv(h)
 
 
-        # TODO: might still be usefull: does the FM learn only the off-diagonal terms?
-        # see
-        # Shape: [B, vocab_size, H, W]
-        indices_2d = z_img.long().squeeze(1)          # -> [B, H, W]
-
-        logits = torch.scatter(
-            logits,
-            dim=1,                                    # vocab dimension
-            index=indices_2d.unsqueeze(1),            # [B, 1, H, W]
-            src=torch.zeros_like(logits[:, :1, :, :]) # zeros, broadcast
-        )
+        # NOTE: do NOT zero out the diagonals
+        # # see
+        # # Shape: [B, vocab_size, H, W]
+        # indices_2d = z_img.long().squeeze(1)          # -> [B, H, W]
+        #
+        # logits = torch.scatter(
+        #     logits,
+        #     dim=1,                                    # vocab dimension
+        #     index=indices_2d.unsqueeze(1),            # [B, 1, H, W]
+        #     src=torch.zeros_like(logits[:, :1, :, :]) # zeros, broadcast
+        # )
 
         # NOTE: the FM loss expects the tokens at the end
         return logits.reshape(B, H, W, self.vocab_size)

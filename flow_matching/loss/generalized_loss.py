@@ -49,26 +49,27 @@ class MixturePathGeneralizedKL(_Loss):
         x_1_shape = x_1.shape
 
         # extract x_1 value of log(p_{1|t}(x|x_t)).
+        # Full distribution
         log_p_1t = torch.log_softmax(logits, dim=-1)
+        # The entry for x1
         log_p_1t_x1 = torch.gather(log_p_1t, dim=-1, index=x_1.unsqueeze(-1))
         log_p_1t_x1 = log_p_1t_x1.view(*x_1_shape)
 
         # extract x_t value of p_{1|t}(x|x_t).
         p_1t = torch.exp(log_p_1t)
+        # The entry for x_t
         p_1t_xt = torch.gather(p_1t, dim=-1, index=x_t.unsqueeze(-1))
         p_1t_xt = p_1t_xt.view(*x_1_shape)
 
         scheduler_output = self.path.scheduler(t)
 
         jump_coefficient = (
-            scheduler_output.d_alpha_t / (1 - scheduler_output.alpha_t)
+                scheduler_output.d_alpha_t / (1 - scheduler_output.alpha_t)
         )[(...,) + (None,) * (x_1.dim() - 1)]
         jump_coefficient = jump_coefficient.repeat(1, *x_1_shape[1:])
         delta_x1_xt = (x_t == x_1).to(log_p_1t.dtype)
 
-        loss = -jump_coefficient * (
-            p_1t_xt - delta_x1_xt + (1 - delta_x1_xt) * log_p_1t_x1
-        )
+        loss = -jump_coefficient * (p_1t_xt - delta_x1_xt + (1 - delta_x1_xt) * log_p_1t_x1)
 
         if self.reduction == "mean":
             return torch.mean(loss)
