@@ -66,7 +66,7 @@ class CNNResidualBlock(nn.Module):
     (e.g. the diffusion timestep embedding).
     """
 
-    def __init__(self, num_channels, time_emb_dim, dropout=0.0):
+    def __init__(self, num_channels, time_emb_dim, dropout=0.0, kernel_size=3):
         """
         :param num_channels: number of channels for the conv layers
         :param time_emb_dim: dimension of the global time embedding
@@ -76,8 +76,8 @@ class CNNResidualBlock(nn.Module):
         self.num_channels = num_channels
 
         # Two conv layers for the residual block
-        self.conv1 = nn.Conv2d(num_channels, num_channels, kernel_size=3, padding=1)
-        self.conv2 = nn.Conv2d(num_channels, num_channels, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=1)
+        self.conv2 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=1)
 
         # Norms
         self.norm1 = nn.GroupNorm(num_groups=8, num_channels=num_channels)
@@ -173,7 +173,8 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
             blocks.append(CNNResidualBlock(
                 num_channels=self.num_cnn_channels,
                 time_emb_dim=self.time_emb_dim,
-                dropout=dropout
+                dropout=dropout,
+                kernel_size=config.model.kernel_size if 'kernel_size' in config.model else 3
             ))
         self.cnn_blocks = nn.ModuleList(blocks)
 
