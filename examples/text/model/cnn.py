@@ -217,4 +217,4 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
 
 
         # NOTE: the FM loss expects the token dimension at the end
-        return logits.logits.permute(0, 2, 3, 1).contiguous()
+        return logits.permute(0, 2, 3, 1).contiguous()
