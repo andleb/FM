@@ -63,6 +63,7 @@ class MixturePathGeneralizedKL(_Loss):
 
         scheduler_output = self.path.scheduler(t)
 
+        # NOTE: eqs. 7.24/7.31 in the guide
         jump_coefficient = (
                 scheduler_output.d_alpha_t / (1 - scheduler_output.alpha_t)
         )[(...,) + (None,) * (x_1.dim() - 1)]
