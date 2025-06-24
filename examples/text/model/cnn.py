@@ -75,9 +75,11 @@ class CNNResidualBlock(nn.Module):
         super().__init__()
         self.num_channels = num_channels
 
+        pad = (kernel_size - 1) // 2          # keeps H,W unchanged
+
         # Two conv layers for the residual block
-        self.conv1 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=1)
-        self.conv2 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=1)
+        self.conv1 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=pad)
+        self.conv2 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=pad)
 
         # Norms
         self.norm1 = nn.GroupNorm(num_groups=8, num_channels=num_channels)
