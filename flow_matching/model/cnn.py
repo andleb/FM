@@ -8,6 +8,7 @@ import math
 from huggingface_hub import PyTorchModelHubMixin
 from omegaconf import OmegaConf
 
+
 ##############################################################################
 #                          Timestep Embedder                                 #
 ##############################################################################
@@ -16,6 +17,7 @@ class TimestepEmbedder(nn.Module):
     """
     Embeds scalar timesteps into a vector representation of size `hidden_size`.
     """
+
     def __init__(self, hidden_size, frequency_embedding_size=256):
         super().__init__()
         self.mlp = nn.Sequential(
@@ -56,6 +58,7 @@ class TimestepEmbedder(nn.Module):
         t_sin = self.timestep_embedding(t, self.frequency_embedding_size)
         return self.mlp(t_sin)
 
+
 ##############################################################################
 #                     A Simple CNN Residual Block (FiLM)                     #
 ##############################################################################
@@ -75,7 +78,7 @@ class CNNResidualBlock(nn.Module):
         super().__init__()
         self.num_channels = num_channels
 
-        pad = (kernel_size - 1) // 2          # keeps H,W unchanged
+        pad = (kernel_size - 1) // 2  # keeps H,W unchanged
 
         # Two conv layers for the residual block
         self.conv1 = nn.Conv2d(num_channels, num_channels, kernel_size=kernel_size, padding=pad)
@@ -122,6 +125,7 @@ class CNNResidualBlock(nn.Module):
 
         # Residual
         return x + out
+
 
 ##############################################################################
 #                  CNN-Based FM Model
@@ -216,8 +220,6 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
             # Final projection
             # shape: (B, vocab_size, H, W)
             logits = self.final_conv(h)
-
-
 
         # NOTE: the FM loss expects the token dimension at the end
         return logits.permute(0, 2, 3, 1).contiguous()
