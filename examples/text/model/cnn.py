@@ -191,7 +191,7 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
         B, _, H, W = z_img.shape
         # Concatenate Z and X along channel dimension => shape [B, 2, H, W]
         if self.config.model.in_channels == 1:
-            combined = z_img
+            combined = z_img.float()
         elif x_img is None:
             combined = torch.cat([z_img, z_img.to(torch.float32)], dim=1)
         else:
