@@ -14,11 +14,11 @@ from flow_matching.utils import ModelWrapper
 
 ## Model wrapper for sampling
 class WrappedModel(ModelWrapper):
-    def forward(self, x: torch.Tensor, t: torch.Tensor, **model_extras):
+    def forward(self, x: torch.Tensor, t: torch.Tensor, **extras):
         if len(x.shape) == 3:
             x = x.unsqueeze(1)  # Convert [B, H, W] to [B, 1, H, W]
 
-        logits = self.model(z_img=x, t=t, **model_extras)
+        logits = self.model(z_img=x, t=t, **extras)
 
         return torch.softmax(logits, dim=-1)
 
@@ -201,7 +201,7 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
         # Final 1×1 conv to produce per-pixel logits => shape [B, vocab_size, H, W]
         self.final_conv = nn.Conv2d(self.num_cnn_channels, self.vocab_size, kernel_size=1)
 
-    def forward(self, z_img, t, x_img=None):
+    def forward(self, z_img, t, x_img=None, **kwargs):
         """
         :param z_img: [B, 1, H, W], the discrete star map (0 or 1)
         :param t: [B,], diffusion timesteps
