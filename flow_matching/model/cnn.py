@@ -11,14 +11,24 @@ from omegaconf import OmegaConf
 from flow_matching.utils import ModelWrapper
 
 
-
 ## Model wrapper for sampling
 class WrappedModel(ModelWrapper):
     def forward(self, x: torch.Tensor, t: torch.Tensor, **extras):
         if len(x.shape) == 3:
             x = x.unsqueeze(1)  # Convert [B, H, W] to [B, 1, H, W]
 
-        logits = self.model(z_img=x, t=t, **extras)
+        # unpack the dictionary of extras
+        x_img = extras.get('x_img', None)
+        n_repeats = extras.get('n_repeats', 1)
+
+        if n_repeats > 1 and x_img is not None:
+            x_img = (x_img  # [N, C, H, W]
+                     .unsqueeze(1)  # [N, 1, C, H, W]   (add repeat-axis)
+                     .expand(-1, n_repeats,  # [N, n_repeat, C, H, W]  (view only)
+                             -1, -1, -1)
+                     .reshape(-1, *x_img.shape[1:]))  # [N*n_repeat, C, H, W]
+
+        logits = self.model(z_img=x, t=t, x_img=x_img)
 
         return torch.softmax(logits, dim=-1)
 
