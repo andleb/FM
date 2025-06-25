@@ -8,6 +8,20 @@ import math
 from huggingface_hub import PyTorchModelHubMixin
 from omegaconf import OmegaConf
 
+from flow_matching.utils import ModelWrapper
+
+
+
+## Model wrapper for sampling
+class WrappedModel(ModelWrapper):
+    def forward(self, x: torch.Tensor, t: torch.Tensor, **model_extras):
+        if len(x.shape) == 3:
+            x = x.unsqueeze(1)  # Convert [B, H, W] to [B, 1, H, W]
+
+        logits = self.model(z_img=x, t=t, **model_extras)
+
+        return torch.softmax(logits, dim=-1)
+
 
 ##############################################################################
 #                          Timestep Embedder                                 #
@@ -196,8 +210,9 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
         """
 
         B, _, H, W = z_img.shape
+
         # Concatenate Z and X along channel dimension => shape [B, 2, H, W]
-        if self.config.model.in_channels == 1:
+        if self.config.model.in_channels == 1 and x_img is None:
             combined = z_img.float()
         elif x_img is None:
             combined = torch.cat([z_img, z_img.to(torch.float32)], dim=1)
