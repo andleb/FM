@@ -21,6 +21,9 @@ class WrappedModel(ModelWrapper):
         x_img = extras.get('x_img', None)
         n_repeats = extras.get('n_repeats', 1)
 
+        assert x_img is None or x_img.shape[0] == x.shape[0], \
+           f"conditioning batch {x_img.shape[0]} vs z batch {x.shape[0]}"
+
         if n_repeats > 1 and x_img is not None:
             x_img = (x_img  # [N, C, H, W]
                      .unsqueeze(1)  # [N, 1, C, H, W]   (add repeat-axis)
