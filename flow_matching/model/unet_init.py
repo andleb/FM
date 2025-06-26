@@ -696,8 +696,8 @@ class UNetModel(nn.Module):
 
         h = x
         # NOTE: concatenate conditioning! rename
-        if "x_img" in extra:
-            h = torch.cat([x, extra["x_img"]], dim=1)
+        if "concat_conditioning" in extra:
+            h = torch.cat([x, extra["concat_conditioning"]], dim=1)
 
         for module in self.input_blocks:
             h = module(h, emb)

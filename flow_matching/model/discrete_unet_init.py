@@ -8,7 +8,7 @@ from typing import Mapping, Optional, Tuple
 
 import torch
 import torch.nn as nn
-from unet import UNetModel
+from unet_init import UNetModel
 
 
 class PixelEmbedding(nn.Module):
