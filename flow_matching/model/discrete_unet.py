@@ -156,13 +156,13 @@ class ConditionalDiscreteUNetModel(nn.Module):
         )
 
     #
-    def forward(self, z_t, t, x_img=None):
+    def forward(self, z_img, t, x_img=None):
         """
-        z_t : (B,1,H,W) – tokenised star map at time t
+        z_img : (B,1,H,W) – tokenised star map at time t
         x_img : (B,1,H,W) – noisy conditioning image (may be None)
         """
 
-        z_emb   = self.token_embed(z_t)      # (B, C_z, H, W)
+        z_emb   = self.token_embed(z_img)      # (B, C_z, H, W)
 
         extra = {}
         if x_img is not None:
