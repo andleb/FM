@@ -10,7 +10,7 @@ from omegaconf import OmegaConf
 
 import torch
 import torch.nn as nn
-from unet import UNetModel
+from .unet import UNetModel
 
 
 class PixelEmbedding(nn.Module):
@@ -150,11 +150,9 @@ class ConditionalDiscreteUNetModel(nn.Module):
             channel_mult      = tuple(self.channel_mult),
             input_projection  = True,        # **MUST** be True with extra channels
             ignore_time       = False,       # keep t‑embedding
-            resblock_updown  = self.cfg.resblock_updown,
-            use_scale_shift_norm = self.cfg.use_scale_shift_norm,
-            with_fourier_features = self.cfg.with_fourier_features,
-
-
+            resblock_updown  = self.cfg.model.resblock_updown,
+            use_scale_shift_norm = self.cfg.model.use_scale_shift_norm,
+            with_fourier_features = self.cfg.model.with_fourier_features,
         )
 
     #

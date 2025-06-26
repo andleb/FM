@@ -16,7 +16,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from nn import (
+from .nn import (
     avg_pool_nd,
     checkpoint,
     conv_nd,
