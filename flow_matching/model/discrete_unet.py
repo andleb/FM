@@ -117,7 +117,6 @@ class ConditionalDiscreteUNetModel(nn.Module):
 
         self.cfg = cfg
 
-        self.vocab_size        = cfg.tokens             # 2 for {0,1}
         self.in_channels_z     = cfg.model.in_channels          # 1
         self.in_channels_x_raw = cfg.model.cond_raw_channels    # 1
 
@@ -126,6 +125,9 @@ class ConditionalDiscreteUNetModel(nn.Module):
         self.num_res_blocks    = cfg.model.num_res_blocks
         self.dropout           = cfg.model.dropout
         self.attn_res          = cfg.model.attention_resolutions
+
+        self.absorb = (cfg.graph.type == "absorb")
+        self.vocab_size = cfg.tokens + (1 if self.absorb else 0)
 
         #
         # Each pixel token -> embedding_dim‑vector
