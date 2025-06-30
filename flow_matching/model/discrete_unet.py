@@ -164,17 +164,21 @@ class ConditionalDiscreteUNetModel(nn.Module):
         x_img : (B,1,H,W) – noisy conditioning image (may be None)
         """
 
-        z_emb   = self.token_embed(z_img)      # (B, C_z, H, W)
+        z_emb   = self.token_embed(z_img)      
 
         extra = {}
         if x_img is not None:
-            extra["concat_conditioning"] = self.cond_proj(x_img)      # (B,C_cond,H,W)
+            extra["concat_conditioning"] = self.cond_proj(x_img)
+
+        else:
+            # allocate a zero-tensor on the same device so channels sum to 64
+            extra["concat_conditioning"] = torch.zeros_like(z_emb)
 
         # UNet does the concatenation internally
-        logits = self.unet(x = z_emb, timesteps=t, extra=extra)                          # (B,C_out*V,H,W)
+        logits = self.unet(x=z_emb, timesteps=t, extra=extra)
         B, C_outV, H, W = logits.shape
         
         logits = logits.reshape(B, self.in_channels_z, self.vocab_size, H, W)
 
-        return logits.permute(0, 1, 3, 4, 2)  # (B,1,H,W,2)
+        return logits.permute(0, 1, 3, 4, 2)
 
