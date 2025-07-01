@@ -28,15 +28,8 @@ class WrappedModel(ModelWrapper):
         assert x_img is None or x_img.shape[0] == x.shape[0], \
            f"conditioning batch {x_img.shape[0]} vs z batch {x.shape[0]}"
 
-        # if n_repeats > 1 and x_img is not None:
-            # x_img = (x_img  # [N, C, H, W]
-            #          .unsqueeze(1)  # [N, 1, C, H, W]   (add repeat-axis)
-            #          .expand(-1, n_repeats,  # [N, n_repeat, C, H, W]  (view only)
-            #                  -1, -1, -1)
-            #          .reshape(-1, *x_img.shape[1:]))  # [N*n_repeat, C, H, W]
-
-
         # NOTE: this won't work as we'd need to modify the solver
+        # Leave in for now, just don't pass n_repeats > 1
         if n_repeats > 1:
             # repeat both token image and time‑stamps
             x  = x.repeat_interleave(n_repeats, dim=0)          # (B×k,1,H,W)
