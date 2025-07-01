@@ -196,6 +196,7 @@ class MixtureDiscreteEulerSolver(Solver):
                 h = t_discretization[i + 1 : i + 2] - t_discretization[i : i + 1]
 
                 # Sample x_1 ~ p_1|t( \cdot |x_t)
+                # NOTE: model call
                 p_1t = self.model(x=x_t, t=t.repeat(x_t.shape[0]), **model_extras)
                 x_1 = categorical(p_1t.to(dtype=dtype_categorical))
 
