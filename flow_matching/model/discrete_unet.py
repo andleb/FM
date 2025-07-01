@@ -35,12 +35,14 @@ class WrappedModel(ModelWrapper):
             #                  -1, -1, -1)
             #          .reshape(-1, *x_img.shape[1:]))  # [N*n_repeat, C, H, W]
 
-        if n_repeats > 1:
-            # repeat both token image and time‑stamps
-            x  = x.repeat_interleave(n_repeats, dim=0)          # (B×k,1,H,W)
-            t  = t.repeat_interleave(n_repeats, dim=0)          # (B×k)
-            if x_img is not None:
-                x_img = x_img.repeat_interleave(n_repeats, dim=0)
+
+        # NOTE: this won't work as we'd need to modify the solver
+        # if n_repeats > 1:
+        #     # repeat both token image and time‑stamps
+        #     x  = x.repeat_interleave(n_repeats, dim=0)          # (B×k,1,H,W)
+        #     t  = t.repeat_interleave(n_repeats, dim=0)          # (B×k)
+        #     if x_img is not None:
+        #         x_img = x_img.repeat_interleave(n_repeats, dim=0)
 
         logits = self.model(z_img=x, t=t, x_img=x_img)
 
