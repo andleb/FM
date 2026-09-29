@@ -161,7 +161,7 @@ class CNNResidualBlock(nn.Module):
 class DFM_CNN(nn.Module, PyTorchModelHubMixin):
     """
     CNN-based variant of your Score Entropy Diffusion model.
-    - Z: [B, 1, H, W] with 0/1 star positions
+    - Z: [B, 1, H, W] with 0/1 object positions
     - X: [B, 1, H, W] with noisy conditioning image
     - Output: logits over the discrete states for each pixel, shape [B, vocab_size, H, W].
       For binary diffusion, set vocab_size=2.
@@ -216,7 +216,7 @@ class DFM_CNN(nn.Module, PyTorchModelHubMixin):
 
     def forward(self, z_img, t, x_img=None, **kwargs):
         """
-        :param z_img: [B, 1, H, W], the discrete star map (0 or 1)
+        :param z_img: [B, 1, H, W], the discrete label map (0 or 1)
         :param t: [B,], diffusion timesteps
         :param x_img: [B, 1, H, W], the noisy conditioning
         :return: logits over the discrete states, shape [B, vocab_size, H, W]
