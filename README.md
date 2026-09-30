@@ -10,7 +10,7 @@ The library implements continuous and discrete flow matching, with the model arc
 discrete flow matching on a pixel grid**: the state is a map of per-pixel discrete labels, and generation is conditioned
 on an observed image.
 
-Exploratory research work from 2025. The training and evaluation scripts are not provided.
+Research work from 2025. The training and evaluation scripts are not provided.
 
 ## What was changed
 
